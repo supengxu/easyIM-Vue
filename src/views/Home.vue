@@ -7,206 +7,8 @@
 
         </textarea>
         </div>
-        <div class="text" :class="{'is-show': isShow}">
-            <h1 class="title" style="font-size: 18px;">一篇文章引发的<span style="color: red;">思考</span></h1>
-            <div class="content">
-                一次读公号推文, 发现一篇文章写得特好, 勾起了好奇心
-                <h2 style="margin-top: 20px;"><a target="_blank" href="https://mp.weixin.qq.com/s/so7F88S7-3Wmq9x_rrYAoA">《群聊比单聊，为什么复杂这么多？》</a></h2>
-                <h5><cite style="color: rgb(0, 82, 255)">( 画外音: 点击查看详情 )</cite> </h5>
-                <h3 style="margin-top: 10px;">从此无法自拔</h3>
-                <div style="color: #99a9bf">于是有了下面的故事</div>
-                <h3 style="margin-top: 20px;">开源的H5聊天系统 </h3>
-                <h5><cite style="color: rgb(0, 82, 255)">( 画外音: 开源爱好者😝 )</cite> </h5>
-                <div style="color: #99a9bf">注: 你会发现这个系统是适配手机端和PC端的</div>
-                <h5 style="margin-top: 20px;"><span>( 地址 )</span> </h5>
-                <div style="margin-top: 10px;">
-                    <a href="https://github.com/lmxdawn/him-vue" style="margin-left: 2px;font-size: 25px;">him-vue</a>
-                    <a href="https://github.com/lmxdawn/him-netty" style="margin-left: 2px;font-size: 25px;">him-netty</a>
-                    <a href="https://shang.qq.com/wpa/qunwpa?idkey=d4965fc7101936dcdea5eb1d05e2eaeb3128f20796028ee937ab516652083c6c" style="margin-left: 2px;font-size: 25px;">QQ群</a>
-                </div>
-
-                <h3 style="color: red;margin-top: 10px;">点击右下角 ﹤我们开始聊天吧~﹥ 按钮</h3>
-
-                <h3 style="margin-top: 20px;">操作流程</h3>
-                <h4 style="color: green">
-                    <br/>
-                    点击右下方的我们聊天吧
-                    <br/>
-                    <span style="font-size: 20px;">↓</span>
-                    <br/>
-                    女游客/男游客/QQ登录
-                    <br/>
-                    <span style="font-size: 20px;">↓</span>
-                    <br/>
-                    点击右上方的 二维码按钮, 生成二维码 <span style="color: red;">注意: 建议在浏览器中测试, 因为反复测试, 在iOS手机版的QQ中退出登录会失败, 因为Cookie清空不了</span>
-                    <br/>
-                    <span style="font-size: 20px;">↓</span>
-                    <br/>
-                    把生成好的二维码发给好友
-                    <br/>
-                    <span style="font-size: 20px;">↓</span>
-                    <br/>
-                    这个时候等待好友确认, 就可以聊天了
-                    <br/>
-                    <span style="font-size: 20px;">↓</span>
-                    <br/>
-                    左下角 换肤图标 可以切换皮肤
-
-                </h4>
-
-                <h1 style="color: red;margin-top: 10px;">已知的问题列表</h1>
-
-                <div class="wenti-list">
-                    <div style="margin-top: 5px">1. iOS版本手机QQ中清空不了 Cookie 的bug (Android 版本的QQ没试), 其它浏览器均正常</div>
-                    <div style="margin-top: 5px;">
-                        2. 手机微信中打开后点击输入文字后, 不管点不点击发送按钮都会出现短暂的不能点击的现象(任何按钮都不能点击), 后来发现是因为在微信里面, 输入法把 输入框顶上去了, 然后输入法隐藏后输入框还在上面!!!!
-                        <a target="_blank" href="https://developers.weixin.qq.com/community/develop/doc/00040a43cd4290dedbc7e7f1851400">点击查看详情</a>
-                    </div>
-                </div>
-
-                <h1>功能列表</h1>
-                <div class="gongneng-list">
-                    <div><label><input type="checkbox" disabled checked />单聊</label></div>
-                    <div><label><input type="checkbox" disabled checked />群聊</label></div>
-                    <div><label><input type="checkbox" disabled checked />protobuf 编解码</label></div>
-                    <div><label><input type="checkbox" disabled checked />客户端心跳</label></div>
-                    <div><label><input type="checkbox" disabled checked />客户端断开重连</label></div>
-                    <div><label><input type="checkbox" disabled checked />异地登录, 通知下线</label></div>
-                    <div><label><input type="checkbox" disabled checked />移动端/PC端适配</label></div>
-                    <div><label><input type="checkbox" disabled checked />离线消息 (ack 机制, 实现可达性)</label></div>
-                    <div><label><input type="checkbox" disabled checked />第三方QQ登录</label></div>
-                    <div><label><input type="checkbox" disabled checked />自带 emoji 表情</label></div>
-                    <div><label><input type="checkbox" disabled checked />文本消息</label></div>
-                    <div><label><input type="checkbox" disabled/>声音提示</label></div>
-                    <div><label><input type="checkbox" disabled/>图片消息</label></div>
-                    <div><label><input type="checkbox" disabled/>音频消息</label></div>
-                    <div><label><input type="checkbox" disabled/>视屏消息</label></div>
-                    <div><label><input type="checkbox" disabled/>分布式部署</label></div>
-                    <div><label><input type="checkbox" disabled/>PHP 版本的 (Workerman 版本)</label></div>
-                </div>
-
-            </div>
-
-            <h2 style="margin-top: 20px;">效果图</h2>
-
-            <div class="img-list">
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG15.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG16.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG17.jpeg'/>
-                </div>
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG18.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG19.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG20.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG21.jpeg'/>
-                </div>
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG22.jpeg'/>
-                </div>
-
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/1WechatIMG24.jpeg'/>
-                </div>
-
-
-
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG6.jpeg'/>
-                </div>
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG7.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG8.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG9.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG10.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG11.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG12.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG13.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG14.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG15.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG16.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG17.jpeg'/>
-                </div>
-
-
-                <div class="img-list-item">
-                    <img src='https://github.com/lmxdawn/him-vue/raw/master/pic/WechatIMG18.jpeg'/>
-                </div>
-
-            </div>
-
-        </div>
-
         <div class="view-box">
-            <him ref="him"
+            <background ref="him"
                 :isShow="isShow"
                 width="350px"
                 height="650px"
@@ -222,8 +24,7 @@
                 @on-qq-login-click="qqLoginClick"
                 @on-login-init="loginInit"
                 @on-request-err="requestErr">
-
-            </him>
+            </background>
         </div>
         <div class="btn-ok" @click="isShowClick" v-if="!isShow">
             <i class="icon"></i>
@@ -236,7 +37,7 @@
 import Cookies from "js-cookie";
 // protobuf 编码
 import protoRoot from "@/proto/proto";
-import Him from "../components/EasyIM/index";
+import Background from "./EasyIM/index";
 
 const WSBaseReqProto = protoRoot.lookup("protocol.WSBaseReqProto");
 const WSBaseResProto = protoRoot.lookup("protocol.WSBaseResProto");
@@ -266,13 +67,12 @@ export default {
         };
     },
     components: {
-        Him
+        Background
     },
     methods: {
         // WebSocket 编码
         WSResEncode(payload) {
             let errMsg = WSBaseReqProto.verify(payload);
-            console.log("buff 解析错误信息：", errMsg);
             // Create a new message
             const wsData = WSBaseReqProto.create(payload);
             // Encode a message to an Uint8Array (browser) or Buffer (node)

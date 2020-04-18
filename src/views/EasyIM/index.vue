@@ -23,30 +23,9 @@
                 </div>
             </div>
 
-            <div class="user-qrcode-box" v-if="userQRCodeVisible" @click="userQRCodeCloseHandle">
-                <div class="user-qrcode">
-                    <img :src="userQRCodeImg" alt="" style="display: block;" @click.stop="downloadImg(userQRCodeImg)">
-                    <div class="user-qrcode-download" @click.stop="downloadImg(userQRCodeImg)">点击/长按保存二维码</div>
-                    <div class="user-uid" @click.stop="">用户ID: {{user.uid}}</div>
-                </div>
-            </div>
+            <qr-code :user="user" ref="qrImage" />
 
-            <div class="user-login-box" v-if="!user.uid" @click="isShowClick">
-                <div class="user-login-list">
-                    <a class="user-login-button" href="javascript:" @click="touristLogin(2)">
-                        <img src="./image/user-2-default.png" alt="女游客登录">
-                        <span>女游客</span>
-                    </a>
-                    <a class="user-login-button" href="javascript:" @click="touristLogin(1)">
-                        <img src="./image/user-1-default.png" alt="男游客登录">
-                        <span>男游客</span>
-                    </a>
-                    <a class="user-login-button" href="javascript:" @click="qqLoginClick">
-                        <img src="./image/login-qq.png" alt="QQ登录">
-                        <span>QQ登录</span>
-                    </a>
-                </div>
-            </div>
+            <login v-if="!user.uid" @click="isShowClick" v-on:login-success="init" v-on:user-logout="userLogout"/>
 
             <header class="im-panel-header">
                 <div class="im-header-user">
@@ -62,10 +41,10 @@
                 </div>
                 <div class="im-header-setwin">
                     <div class="im-header-out-login" @click="userOutClick" title="登出">
-                        <img src="./image/out-login.png" alt="登出" style="width: 100%; height: 100%;">
+                        <img src="../../assets/image/out-login.png" alt="登出" style="width: 100%; height: 100%;">
                     </div>
-                    <div class="im-header-qrcode-box" @click="userQRCodeClick">
-                        <img src="./image/qrcode.png" alt="二维码" title="二维码" style="width: 100%; height: 100%;">
+                    <div class="im-header-qrcode-box" @click="openQRCodeClick">
+                        <img src="../../assets/image/qrcode.png" alt="二维码" title="二维码" style="width: 100%; height: 100%;">
                     </div>
                     <i class="im-icon im-icon-ring-open"></i>
                     <i class="im-icon im-icon-panel-down" @click="isShowClick"></i>
@@ -98,7 +77,7 @@
                 </div>
                 <div class="im-panel-searchbar">
                     <div class="im-panel-searchbar-inner">
-                        <img src="./image/search.png" class="im-panel-search">
+                        <img src="../../assets/image/search.png" class="im-panel-search">
                         <input type="search" placeholder="搜索" class="im-panel-searchbar-core">
                     </div>
                 </div>
@@ -238,7 +217,7 @@
 
             <footer class="im-panel-footer">
                 <div class="im-panel-theme" @click="themeVisible = !themeVisible">
-                    <img src="./image/theme.png" alt="更换主题">
+                    <img src="../../assets/image/theme.png" alt="更换主题">
                 </div>
                 <div class="im-panel-theme-list" v-if="themeVisible">
                     <div class="im-panel-theme-item" v-for="(item, index) in themeList" :key="index" @click="changeTheme(index, true)">
@@ -261,22 +240,7 @@
                 </div>
             </div>
 
-            <div class="user-login-box" v-if="!user.uid">
-                <div class="user-login-list">
-                    <a class="user-login-button" href="javascript:" @click="touristLogin(2)">
-                        <img src="./image/user-2-default.png" alt="女游客登录">
-                        <span>女游客</span>
-                    </a>
-                    <a class="user-login-button" href="javascript:" @click="touristLogin(1)">
-                        <img src="./image/user-1-default.png" alt="男游客登录">
-                        <span>男游客</span>
-                    </a>
-                    <a class="user-login-button" href="javascript:" @click="qqLoginClick">
-                        <img src="./image/login-qq.png" alt="QQ登录">
-                        <span>QQ登录</span>
-                    </a>
-                </div>
-            </div>
+            <login v-if="!user.uid" v-on:login-success="init"/>
 
             <header class="im-chat-header">
                 <div class="im-chat-move" @mousedown="moveChatMsg"></div>
@@ -297,7 +261,7 @@
                 </div>
                 <div class="im-chat-setwin">
                     <div class="im-icon-close" style="cursor: pointer;" @click="groupQRCodeClick" v-if="historyMsgListSelected.type === 2">
-                        <img src="./image/qrcode.png" alt="二维码" title="二维码" style="width: 100%; height: 100%;vertical-align: text-bottom;">
+                        <img src="../../assets/image/qrcode.png" alt="二维码" title="二维码" style="width: 100%; height: 100%;vertical-align: text-bottom;">
                     </div>
                     <i class="im-icon im-icon-close" @click="closeChat"></i>
                 </div>
@@ -305,30 +269,30 @@
             </header>
 
             <nav style="display: none;">
-                <div id="emoji_[smile]"><img src="./emoji/smile.png" class="im-chat-msg-emoji" title="smile" alt="smile"></div>
-                <div id="emoji_[laughing]"><img src="./emoji/laughing.png" class="im-chat-msg-emoji" title="laughing" alt="laughing"></div>
-                <div id="emoji_[blush]"><img src="./emoji/blush.png" class="im-chat-msg-emoji" title="blush" alt="blush"></div>
-                <div id="emoji_[heart_eyes]"><img src="./emoji/heart_eyes.png" class="im-chat-msg-emoji" title="heart_eyes" alt="heart_eyes"></div>
-                <div id="emoji_[smirk]"><img src="./emoji/smirk.png" class="im-chat-msg-emoji" title="smirk" alt="smirk"></div>
-                <div id="emoji_[flushed]"><img src="./emoji/flushed.png" class="im-chat-msg-emoji" title="flushed" alt="flushed"></div>
-                <div id="emoji_[grin]"><img src="./emoji/grin.png" class="im-chat-msg-emoji" title="grin" alt="grin"></div>
-                <div id="emoji_[kissing_smiling_eyes]"><img src="./emoji/kissing_smiling_eyes.png" class="im-chat-msg-emoji" title="kissing_smiling_eyes" alt="kissing_smiling_eyes"></div>
-                <div id="emoji_[wink]"><img src="./emoji/wink.png" class="im-chat-msg-emoji" title="wink" alt="wink"></div>
-                <div id="emoji_[kissing_closed_eyes]"><img src="./emoji/kissing_closed_eyes.png" class="im-chat-msg-emoji" title="kissing_closed_eyes" alt="kissing_closed_eyes"></div>
-                <div id="emoji_[stuck_out_tongue_winking_eye]"><img src="./emoji/stuck_out_tongue_winking_eye.png" class="im-chat-msg-emoji" title="stuck_out_tongue_winking_eye" alt="stuck_out_tongue_winking_eye"></div>
-                <div id="emoji_[sleeping]"><img src="./emoji/sleeping.png" class="im-chat-msg-emoji" title="sleeping" alt="sleeping"></div>
-                <div id="emoji_[worried]"><img src="./emoji/worried.png" class="im-chat-msg-emoji" title="worried" alt="worried"></div>
-                <div id="emoji_[sweat_smile]"><img src="./emoji/sweat_smile.png" class="im-chat-msg-emoji" title="sweat_smile" alt="sweat_smile"></div>
-                <div id="emoji_[cold_sweat]"><img src="./emoji/cold_sweat.png" class="im-chat-msg-emoji" title="cold_sweat" alt="cold_sweat"></div>
-                <div id="emoji_[joy]"><img src="./emoji/joy.png" class="im-chat-msg-emoji" title="joy" alt="joy"></div>
-                <div id="emoji_[sob]"><img src="./emoji/sob.png" class="im-chat-msg-emoji" title="sob" alt="sob"></div>
-                <div id="emoji_[angry]"><img src="./emoji/angry.png" class="im-chat-msg-emoji" title="angry" alt="angry"></div>
-                <div id="emoji_[mask]"><img src="./emoji/mask.png" class="im-chat-msg-emoji" title="mask" alt="mask"></div>
-                <div id="emoji_[scream]"><img src="./emoji/scream.png" class="im-chat-msg-emoji" title="scream" alt="scream"></div>
-                <div id="emoji_[sunglasses]"><img src="./emoji/sunglasses.png" class="im-chat-msg-emoji" title="sunglasses" alt="sunglasses"></div>
-                <div id="emoji_[thumbsup]"><img src="./emoji/thumbsup.png" class="im-chat-msg-emoji" title="thumbsup" alt="thumbsup"></div>
-                <div id="emoji_[clap]"><img src="./emoji/clap.png" class="im-chat-msg-emoji" title="clap" alt="clap"></div>
-                <div id="emoji_[ok_hand]"><img src="./emoji/ok_hand.png" class="im-chat-msg-emoji" title="ok_hand" alt="ok_hand"></div>
+                <div id="emoji_[smile]"><img src="../../assets/emoji/smile.png" class="im-chat-msg-emoji" title="smile" alt="smile"></div>
+                <div id="emoji_[laughing]"><img src="../../assets/emoji/laughing.png" class="im-chat-msg-emoji" title="laughing" alt="laughing"></div>
+                <div id="emoji_[blush]"><img src="../../assets/emoji/blush.png" class="im-chat-msg-emoji" title="blush" alt="blush"></div>
+                <div id="emoji_[heart_eyes]"><img src="../../assets/emoji/heart_eyes.png" class="im-chat-msg-emoji" title="heart_eyes" alt="heart_eyes"></div>
+                <div id="emoji_[smirk]"><img src="../../assets/emoji/smirk.png" class="im-chat-msg-emoji" title="smirk" alt="smirk"></div>
+                <div id="emoji_[flushed]"><img src="../../assets/emoji/flushed.png" class="im-chat-msg-emoji" title="flushed" alt="flushed"></div>
+                <div id="emoji_[grin]"><img src="../../assets/emoji/grin.png" class="im-chat-msg-emoji" title="grin" alt="grin"></div>
+                <div id="emoji_[kissing_smiling_eyes]"><img src="../../assets/emoji/kissing_smiling_eyes.png" class="im-chat-msg-emoji" title="kissing_smiling_eyes" alt="kissing_smiling_eyes"></div>
+                <div id="emoji_[wink]"><img src="../../assets/emoji/wink.png" class="im-chat-msg-emoji" title="wink" alt="wink"></div>
+                <div id="emoji_[kissing_closed_eyes]"><img src="../../assets/emoji/kissing_closed_eyes.png" class="im-chat-msg-emoji" title="kissing_closed_eyes" alt="kissing_closed_eyes"></div>
+                <div id="emoji_[stuck_out_tongue_winking_eye]"><img src="../../assets/emoji/stuck_out_tongue_winking_eye.png" class="im-chat-msg-emoji" title="stuck_out_tongue_winking_eye" alt="stuck_out_tongue_winking_eye"></div>
+                <div id="emoji_[sleeping]"><img src="../../assets/emoji/sleeping.png" class="im-chat-msg-emoji" title="sleeping" alt="sleeping"></div>
+                <div id="emoji_[worried]"><img src="../../assets/emoji/worried.png" class="im-chat-msg-emoji" title="worried" alt="worried"></div>
+                <div id="emoji_[sweat_smile]"><img src="../../assets/emoji/sweat_smile.png" class="im-chat-msg-emoji" title="sweat_smile" alt="sweat_smile"></div>
+                <div id="emoji_[cold_sweat]"><img src="../../assets/emoji/cold_sweat.png" class="im-chat-msg-emoji" title="cold_sweat" alt="cold_sweat"></div>
+                <div id="emoji_[joy]"><img src="../../assets/emoji/joy.png" class="im-chat-msg-emoji" title="joy" alt="joy"></div>
+                <div id="emoji_[sob]"><img src="../../assets/emoji/sob.png" class="im-chat-msg-emoji" title="sob" alt="sob"></div>
+                <div id="emoji_[angry]"><img src="../../assets/emoji/angry.png" class="im-chat-msg-emoji" title="angry" alt="angry"></div>
+                <div id="emoji_[mask]"><img src="../../assets/emoji/mask.png" class="im-chat-msg-emoji" title="mask" alt="mask"></div>
+                <div id="emoji_[scream]"><img src="../../assets/emoji/scream.png" class="im-chat-msg-emoji" title="scream" alt="scream"></div>
+                <div id="emoji_[sunglasses]"><img src="../../assets/emoji/sunglasses.png" class="im-chat-msg-emoji" title="sunglasses" alt="sunglasses"></div>
+                <div id="emoji_[thumbsup]"><img src="../../assets/emoji/thumbsup.png" class="im-chat-msg-emoji" title="thumbsup" alt="thumbsup"></div>
+                <div id="emoji_[clap]"><img src="../../assets/emoji/clap.png" class="im-chat-msg-emoji" title="clap" alt="clap"></div>
+                <div id="emoji_[ok_hand]"><img src="../../assets/emoji/ok_hand.png" class="im-chat-msg-emoji" title="ok_hand" alt="ok_hand"></div>
             </nav>
 
             <div class="im-chat-user-list" v-if="chatMsgGroupUserVisible">
@@ -388,22 +352,22 @@
 
 <script>
 // @ is an alias to /src
-import Cookies from "js-cookie";
-import { userLoginInfo, userQRCheckCode } from "./api/userIndex";
-import { userFriendLists } from "./api/userFriend";
-import { userLoginByTourist, userLoginByQq } from "./api/userLogin";
+
+import { userLoginInfo } from "../../api/userIndex";
+import { userFriendLists } from "../../api/userFriend";
+import { userLoginByTourist, userLoginByQq } from "../../api/userLogin";
 import {
     userFriendMsgClearUnMsgCount,
     userFriendMsgCreate,
     userFriendMsgLists
-} from "./api/userFriendMsg";
+} from "../../api/userFriendMsg";
 import {
     userFriendAskAck,
     userFriendAskClearFriendAskCount,
     userFriendAskCreate,
     userFriendAskLists
-} from "./api/userFriendAsk";
-import { userGroupCreate, userGroupLists } from "./api/userGroup";
+} from "../../api/userFriendAsk";
+import { userGroupCreate, userGroupLists } from "../../api/userGroup";
 import {
     userGroupUserCheckCode,
     userGroupUserClearUnMsgCount,
@@ -411,12 +375,18 @@ import {
     userGroupUserDelete,
     userGroupUserLists,
     userGroupUserUpdate
-} from "./api/userGroupUser";
-import { userGroupMsgCreate, userGroupMsgLists } from "./api/userGroupMsg";
-
+} from "../../api/userGroupUser";
+import { userGroupMsgCreate, userGroupMsgLists } from "../../api/userGroupMsg";
+import Login from "../../components/login/login"
+import {getSid,getUid,setSid,setUid,delSid,delUid} from "../../utils/cookieUtil"
+import QrCode from "../../components/QrCode/QrCode";
 let QRCode = require("qrcode");
 export default {
-    name: "Him",
+    name: "background",
+    components:{
+        QrCode,
+        Login
+    },
     props: {
         isShow: {
             type: Boolean,
@@ -468,35 +438,35 @@ export default {
             themeList: [
                 {
                     "background-image":
-                        "url(" + require("./image/bg-1.jpg") + ")",
+                        "url(" + require("../../assets/image/bg-1.jpg") + ")",
                     "background-repeat": "no-repeat",
                     "background-size": "cover",
                     "background-color": "#f6f6f6"
                 },
                 {
                     "background-image":
-                        "url(" + require("./image/bg-2.jpg") + ")",
+                        "url(" + require("../../assets/image/bg-2.jpg") + ")",
                     "background-repeat": "no-repeat",
                     "background-size": "cover",
                     "background-color": "#f6f6f6"
                 },
                 {
                     "background-image":
-                        "url(" + require("./image/bg-3.jpg") + ")",
+                        "url(" + require("../../assets/image/bg-3.jpg") + ")",
                     "background-repeat": "no-repeat",
                     "background-size": "cover",
                     "background-color": "#f6f6f6"
                 },
                 {
                     "background-image":
-                        "url(" + require("./image/bg-4.jpg") + ")",
+                        "url(" + require("../../assets/image/bg-4.jpg") + ")",
                     "background-repeat": "no-repeat",
                     "background-size": "cover",
                     "background-color": "#f6f6f6"
                 },
                 {
                     "background-image":
-                        "url(" + require("./image/bg-5.jpg") + ")",
+                        "url(" + require("../../assets/image/bg-5.jpg") + ")",
                     "background-repeat": "no-repeat",
                     "background-size": "cover",
                     "background-color": "#f6f6f6"
@@ -532,7 +502,6 @@ export default {
             ],
             imTabSelectedIndex: 0, // 选中的index
             userQRCodeImg: null,
-            userQRCodeVisible: false,
             groupQRCodeImg: null,
             groupQRCodeVisible: false,
             isMove: false,
@@ -704,60 +673,19 @@ export default {
         };
     },
     methods: {
+        openQRCodeClick(){
+            this.$nextTick(() => {
+                console.log("我进入了111")
+                console.log(this.$refs.qrImage)
+                console.log(this.$refs)
+                this.$refs.qrImage.userQRCodeClick();
+            })
+        },
         // 输入框的失去焦点事件, 解决微信中的bug
         chatTextBlur() {
             window.scroll(0, 0);
         },
-        // 判断字符是否为空的方法
-        isEmpty(obj) {
-            return (
-                !obj || typeof obj === "undefined" || obj === null || obj === ""
-            );
-        },
-        // 设置 登录用户ID
-        setUid(value) {
-            Cookies.set("UID", value, {
-                expires: 365,
-                path: "/"
-            });
-        },
-        getUid() {
-            let uid = Cookies.get("UID", {
-                path: "/"
-            });
-            if (this.isEmpty(uid)) {
-                return null;
-            }
-            return uid;
-        },
-        delUid() {
-            console.log(Cookies.get("UID"))
-            Cookies.remove("UID", {
-                path: "/",
-                domain: "localhost"
-            });
-            alert(Cookies.get("UID"))
-        },
-        setSid(value) {
-            Cookies.set("SID", value, {
-                expires: 365,
-                path: "/"
-            });
-        },
-        getSid() {
-            let sid = Cookies.get("SID", {
-                path: "/"
-            });
-            if (this.isEmpty(sid)) {
-                return null;
-            }
-            return sid;
-        },
-        delSid() {
-            Cookies.remove("SID", {
-                path: "/"
-            });
-        },
+
         setLocalStorage(name, value) {
             localStorage.setItem(name, value);
         },
@@ -824,26 +752,7 @@ export default {
             );
         },
         // 登出
-        userOut() {
-            this.delUid();
-            this.delSid();
-            this.user = {
-                profile: {},
-                sid: null
-            };
 
-            this.userFriendList = {};
-            this.newFriendList = [];
-            this.userGroupList = {};
-            this.historyMsgList = {};
-            this.historyMsgListSelected = {};
-            this.chatMsgList = [];
-            this.chatMsgGroupUserList = {};
-            this.chatCount = 0;
-            this.userQRCodeImg = null;
-            // 关闭websocket 连接
-            this.wsOut();
-        },
         // 游客登录
         touristLogin(sex) {
             // 先退出
@@ -856,8 +765,8 @@ export default {
                     }
                     let data = response.data;
                     // 设置登录信息
-                    this.setUid(data.uid);
-                    this.setSid(data.sid);
+                    setUid(data.uid);
+                    setSid(data.sid);
                     // 登录成功, 重新初始化
                     this.init();
                 })
@@ -874,8 +783,8 @@ export default {
                     }
                     let data = response.data;
                     // 设置登录信息
-                    this.setUid(data.uid);
-                    this.setSid(data.sid);
+                    setUid(data.uid);
+                    setSid(data.sid);
                     // 登录成功, 重新初始化
                     this.init();
                 })
@@ -914,48 +823,13 @@ export default {
         requestErr(code, message) {
             // 登录失效的
             if (code === 1) {
-                this.delUid();
-                this.delSid();
+                delUid();
+                delSid();
             }
             // 向父组件传递出去
             this.$emit("on-request-err", code, message);
         },
-        userQRCodeClick() {
-            if (this.userQRCodeImg) {
-                this.userQRCodeVisible = true;
-                return false;
-            }
-            userQRCheckCode(this.apiBaseUrl)
-                .then(response => {
-                    if (response.code !== 0) {
-                        this.requestErr(response.code, response.message);
-                        return false;
-                    }
-                    var opts = {
-                        errorCorrectionLevel: "H",
-                        type: "image/jpeg",
-                        rendererOpts: {
-                            quality: 0.3
-                        }
-                    };
-                    let qrCodeUrl = this.userQRCodeUrl + response.data;
-                    console.log(qrCodeUrl);
-                    // 生成二维码
-                    QRCode.toDataURL(qrCodeUrl, opts, (error, url) => {
-                        if (error) {
-                            alert(error);
-                            return false;
-                        }
-                        this.userQRCodeVisible = true;
-                        this.userQRCodeImg = url;
-                    });
-                })
-                .catch(() => {});
-        },
-        // 关闭用户二维码
-        userQRCodeCloseHandle() {
-            this.userQRCodeVisible = false;
-        },
+
         // 群二维码
         groupQRCodeClick() {
             if (this.groupQRCodeImg) {
@@ -1176,7 +1050,7 @@ export default {
             this.chatTextFocus = true;
         },
         userInit() {
-            if (!this.getUid() || !this.getSid()) {
+            if (!getUid() || !getSid()) {
                 return false;
             }
             userLoginInfo(this.apiBaseUrl, {})
@@ -1425,6 +1299,24 @@ export default {
                     this.handleChat(chatData);
                 })
                 .catch(() => {});
+        },
+        userLogout(){
+            this.user = {
+                profile: {},
+                sid: null
+            };
+
+            this.userFriendList = {};
+            this.newFriendList = [];
+            this.userGroupList = {};
+            this.historyMsgList = {};
+            this.historyMsgListSelected = {};
+            this.chatMsgList = [];
+            this.chatMsgGroupUserList = {};
+            this.chatCount = 0;
+            this.userQRCodeImg = null;
+            // 关闭websocket 连接
+            this.wsOut();
         },
         // 取消创建群
         createGroupClose() {
@@ -1883,8 +1775,8 @@ export default {
         // 发送ws消息
         webSocketSend(payload) {
             // 加入登录验证
-            payload.uid = parseInt(this.getUid());
-            payload.sid = this.getSid();
+            payload.uid = parseInt(getUid());
+            payload.sid = getSid();
             let buffer = this.WSResEncode(payload);
             this.webSocket.send(buffer);
         },
@@ -2381,7 +2273,7 @@ input {
 .im-icon {
     cursor: pointer;
     background-size: 44px auto;
-    background-image: url(image/im-icon.png);
+    background-image: url(../../assets/image/im-icon.png);
     background-repeat: no-repeat;
 }
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
@@ -2389,7 +2281,7 @@ only screen and (min--moz-device-pixel-ratio: 2),
 only screen and (-o-min-device-pixel-ratio: 2/1),
 only screen and (min-device-pixel-ratio: 2) {
     .im-icon {
-        background-image: url(image/im-icon@2x.png);
+        background-image: url(../../assets/image/im-icon@2x.png);
     }
 }
 .im-icon-ring-open {
@@ -2553,101 +2445,8 @@ only screen and (min-device-pixel-ratio: 2) {
         width: 50%;
     }
 }
-.user-qrcode-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    .user-qrcode {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    }
-    .user-qrcode-download {
-        cursor: pointer;
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        color: #fff;
-    }
-    .user-uid {
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        color: #fff;
-    }
-}
-.user-login-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    z-index: 999;
-    .user-login-list {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-        display: flex;
-    }
-    .user-login-button:first-child {
-        margin-left: 0;
-    }
-    .user-login-button {
-        display: inline-block;
-        margin-left: 20px;
-        cursor: pointer;
-        text-align: center;
-        img {
-            width: 50px;
-            height: 50px;
-        }
-        span {
-            display: block;
-            color: #ffffff;
-        }
-        &:hover {
-            opacity: 0.7;
-        }
-    }
-}
-.group-qrcode-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    .group-qrcode {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    }
-    .group-qrcode-download {
-        cursor: pointer;
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        color: #fff;
-    }
-    .group-id {
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        color: #fff;
-    }
-}
+
+
 .im-tab-nav {
     background-color: rgba(230, 230, 230, 0.7);
 }
@@ -3207,7 +3006,7 @@ only screen and (min-device-pixel-ratio: 2) {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 .im-emoji-control {
-    background-image: url(image/emoji.png);
+    background-image: url(../../assets/image/emoji.png);
     background-size: 25px auto;
     background-repeat: no-repeat;
     display: block;
@@ -3223,7 +3022,7 @@ only screen and (min--moz-device-pixel-ratio: 2),
 only screen and (-o-min-device-pixel-ratio: 2/1),
 only screen and (min-device-pixel-ratio: 2) {
     .im-emoji-control {
-        background-image: url(image/emoji@2x.png);
+        background-image: url(../../assets/image/emoji@2x.png);
     }
 }
 .im-chat-feature-btn {
