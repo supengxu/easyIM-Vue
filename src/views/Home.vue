@@ -21,7 +21,6 @@
                 :WSResEncode="WSResEncode"
                 :WSResDecode="WSResDecode"
                 @on-is-show-click="isShowClick"
-                @on-qq-login-click="qqLoginClick"
                 @on-login-init="loginInit"
                 @on-request-err="requestErr">
             </background>
@@ -87,11 +86,6 @@ export default {
                 const response = WSBaseResProto.decode(buf);
                 cb(response);
             };
-        },
-        // 点击了QQ登录
-        qqLoginClick() {
-            // 前去授权
-            window.location.href = this.qqLoginUrl;
         },
         isShowClick() {
             this.isShow = !this.isShow;

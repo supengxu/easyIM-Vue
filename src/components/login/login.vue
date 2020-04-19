@@ -1,17 +1,13 @@
 <template>
-    <div class="user-login-box">
+    <div class="user-login-box" ref="login">
         <div class="user-login-list">
-            <a class="user-login-button" href="javascript:" @click="touristLogin(2)">
-                <img src="../../assets/image/user-2-default.png" alt="女游客登录">
-                <span>女游客</span>
-            </a>
-            <a class="user-login-button" href="javascript:" @click="touristLogin(1)">
-                <img src="../../assets/image/user-1-default.png" alt="男游客登录">
+            <a class="user-login-button" href="javascript:" @click="touristLogin(12)">
+                <img src="../../assets/image/user-1-default.png" alt="游客登录">
                 <span>男游客</span>
             </a>
-            <a class="user-login-button" href="javascript:" @click="qqLoginClick">
-                <img src="../../assets/image/login-qq.png" alt="QQ登录">
-                <span>QQ登录</span>
+            <a class="user-login-button" href="javascript:" @click="touristLogin(13)">
+                <img src="../../assets/image/user-1-default.png" alt="游客登录">
+                <span>女游客</span>
             </a>
         </div>
     </div>
@@ -25,10 +21,10 @@
         name: "login",
         methods:{
             // 游客登录
-            touristLogin(sex) {
+            touristLogin(uid) {
                 // 先退出
                 this.userOut();
-                userLoginByTourist(process.env.VUE_APP_API_BASE, sex)
+                userLoginByTourist(process.env.VUE_APP_API_BASE,uid)
                     .then(response => {
                         if (response.code !== 0) {
                             this.requestErr(response.code, response.message);
@@ -60,11 +56,6 @@
                         this.init();
                     })
                     .catch(() => {});
-            },
-            // 点击了 QQ 登录
-            qqLoginClick() {
-                // 传递到父组件
-                this.$emit("on-qq-login-click");
             },
             userOut() {
                 delUid();

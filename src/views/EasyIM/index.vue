@@ -122,6 +122,7 @@
 
                 <div class="im-new-friend" @click="newFriendClick">
                     <span>{{ newFriendVisible ? '返回' : '新的朋友'}}</span>
+
                     <span style="color: red;" v-if="!newFriendVisible && user.profile.friendAskCount > 0">
                         {{user.profile.friendAskCount}}
                     </span>
@@ -754,11 +755,6 @@
                     }
                 }
             },
-            // 点击了 QQ 登录
-            qqLoginClick() {
-                // 传递到父组件
-                this.$emit("on-qq-login-click");
-            },
             // im-box 的询问框
             confirmInit(
                 title,
@@ -795,45 +791,11 @@
                 );
             },
             // 登出
+            userOut() {
+                delUid();
+                delSid();
+                this.$emit("user-logout")
 
-            // 游客登录
-            touristLogin(sex) {
-                // 先退出
-                this.userOut();
-                userLoginByTourist(this.apiBaseUrl, sex)
-                    .then(response => {
-                        if (response.code !== 0) {
-                            this.requestErr(response.code, response.message);
-                            return false;
-                        }
-                        let data = response.data;
-                        // 设置登录信息
-                        setUid(data.uid);
-                        setSid(data.sid);
-                        // 登录成功, 重新初始化
-                        this.init();
-                    })
-                    .catch(() => {
-                    });
-            },
-            // QQ 登录
-            qqLogin(code, redirectUri) {
-                this.userOut();
-                userLoginByQq(this.apiBaseUrl, code, redirectUri)
-                    .then(response => {
-                        if (response.code !== 0) {
-                            this.requestErr(response.code, response.message);
-                            return false;
-                        }
-                        let data = response.data;
-                        // 设置登录信息
-                        setUid(data.uid);
-                        setSid(data.sid);
-                        // 登录成功, 重新初始化
-                        this.init();
-                    })
-                    .catch(() => {
-                    });
             },
             // 初始化界面
             init() {

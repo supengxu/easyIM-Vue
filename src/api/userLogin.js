@@ -3,12 +3,12 @@ import { create } from "./himAxios";
 //
 
 // 游客 登录
-export function userLoginByTourist(apiBaseUrl, sex) {
+export function userLoginByTourist(apiBaseUrl,uid) {
     return create(apiBaseUrl)({
         url: "/api/user/login/byTourist",
         method: "post",
-        params: {
-            sex
+        params:{
+            uid
         }
     });
 }
