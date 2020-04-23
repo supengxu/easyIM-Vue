@@ -27,35 +27,11 @@
                 </div>
             </div>
 
-            <qr-code :user="user" ref="qrUserImage"/>
 
             <login v-if="!user.uid" @click="isShowClick" v-on:login-success="init" v-on:user-logout="userLogout"/>
 
-            <header class="im-panel-header">
-                <div class="im-header-user">
-                    <img class="im-header-user-avatar" :src="user.avatar | getDefaultAvatar" alt="头像">
-                    <div class="im-header-user-content">
-                        <div class="im-header-user-name" :title="user.name">
-                            {{ user.name }}
-                        </div>
-                        <div class="im-header-user-remark" :title="user.remark">
-                            {{ user.remark }}
-                        </div>
-                    </div>
-                </div>
-                <div class="im-header-setwin">
-                    <div class="im-header-out-login" @click="userOutClick" title="登出">
-                        <img src="../../assets/image/out-login.png" alt="登出" style="width: 100%; height: 100%;">
-                    </div>
-                    <div class="im-header-qrcode-box" @click="openUserQRCodeClick">
-                        <img src="../../assets/image/qrcode.png" alt="二维码" title="二维码"
-                             style="width: 100%; height: 100%;">
-                    </div>
-                    <i class="im-icon im-icon-ring-open"></i>
-                    <i class="im-icon im-icon-panel-down" @click="isShowClick"></i>
-                </div>
-            </header>
-
+            <easy-header :confirmInit="confirmInit" :user="user" @user-qr-code-click="openUserQRCodeClick"></easy-header>
+            <qr-code :user="user" ref="qrUserImage"/>
             <nav class="im-tab-nav">
                 <ul class="im-tab">
                     <li v-for="item in imTabList"
@@ -246,7 +222,7 @@
         <!--聊天界面-->
         <div class="im-chat-box" v-show="chatVisible" :style="imChatBoxStyle" ref="imChatBox">
 
-            <qr-code  ref="qrImage"/>
+            <qr-code ref="qrImage"/>
 
             <login v-if="!user.uid" v-on:login-success="init"/>
 
@@ -419,11 +395,13 @@
     import Login from "../../components/login/login"
     import {getSid, getUid, setSid, setUid, delSid, delUid} from "../../utils/cookieUtil"
     import QrCode from "../../components/QrCode/QrCode";
+    import EasyHeader from "../header/EasyHeader";
 
     let QRCode = require("qrcode");
     export default {
         name: "background",
         components: {
+            EasyHeader,
             QrCode,
             Login
         },
@@ -715,15 +693,42 @@
             };
         },
         methods: {
+
+            // 群二维码
             openGroupQRImage() {
-                this.$nextTick(() => {
-                    this.$refs.qrUserImage.groupQRCodeClick(this.historyMsgListSelected.id);
-                })
-            },
-            openUserQRCodeClick() {
-                this.$nextTick(() => {
-                    this.$refs.qrUserImage.userQRCodeClick();
-                })
+                if (this.groupQRCodeImg) {
+                    this.groupQRCodeVisible = true;
+                    return false;
+                }
+                userGroupUserCheckCode(
+                    this.apiBaseUrl,
+                    this.historyMsgListSelected.id
+                )
+                    .then(response => {
+                        if (response.code !== 0) {
+                            this.requestErr(response.code, response.message);
+                            return false;
+                        }
+                        var opts = {
+                            errorCorrectionLevel: "H",
+                            type: "image/jpeg",
+                            rendererOpts: {
+                                quality: 0.3
+                            }
+                        };
+                        let qrCodeUrl = this.groupQRCodeUrl + response.data;
+                        console.log(qrCodeUrl);
+                        // 生成二维码
+                        QRCode.toDataURL(qrCodeUrl, opts, (error, url) => {
+                            if (error) {
+                                alert(error);
+                                return false;
+                            }
+                            this.groupQRCodeVisible = true;
+                            this.groupQRCodeImg = url;
+                        });
+                    })
+                    .catch(() => {});
             },
             // 输入框的失去焦点事件, 解决微信中的bug
             chatTextBlur() {
@@ -1279,6 +1284,7 @@
                 this.userQRCodeImg = null;
                 // 关闭websocket 连接
                 this.wsOut();
+                location.reload();
             },
             // 取消创建群
             createGroupClose() {
@@ -1661,6 +1667,11 @@
                     unMsgCount,
                     createTime
                 );
+            },
+            openUserQRCodeClick() {
+                this.$nextTick(() => {
+                    this.$refs.qrUserImage.userQRCodeClick();
+                })
             },
             // 消息类型的消息（群消息）
             wsGroupMsgHandle(response) {
