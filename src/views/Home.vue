@@ -97,15 +97,16 @@ export default {
             console.log("登录初始化完成", userCheckCode, groupCheckCode);
             // 如果有加朋友的验证码
             if (userCheckCode) {
+                console.log("已经拿到验证码了");
                 // 发送加好友的请求
-                this.$refs["him"].createUserFriendAsk(userCheckCode);
+                this.$refs["background"].createUserFriendAsk(userCheckCode);
                 // 发送后删除
                 this.delUserCheckCode();
                 this.$router.push("/");
             }
             // 如果有加群的验证码
             if (groupCheckCode) {
-                this.$refs["him"].joinGroupUser(groupCheckCode);
+                this.$refs["background"].joinGroupUser(groupCheckCode);
                 // 发送后删除
                 this.delGroupCheckCode();
                 this.$router.push("/");
@@ -164,13 +165,6 @@ export default {
         }
     },
     mounted() {
-        // 授权成功后的跳转
-        this.code = this.getQueryVariable("code"); // QQ 登录的code码
-        if (this.code) {
-            this.$refs["him"].qqLogin(this.code, this.qqRedirectUri);
-            // 清空浏览器地址栏的值, 这里其实是刷新当前页面
-            this.$router.push("/");
-        }
         // 默认打开, 延时显示聊天界面
         setTimeout(() => {
             this.isShow = true;
@@ -238,36 +232,6 @@ export default {
         margin-top: 20px;
     }
 }
-.img-list {
-    padding-left: 80px;
-    padding-right: 80px;
-    text-align: left;
-    .img-list-item {
-        display: inline-block;
-        padding: 20px;
-        width: 50%;
-        vertical-align: top;
-        img {
-            width: 100%;
-        }
-    }
-}
-.wenti-list {
-    width: 800px;
-    margin: 0 auto;
-    text-align: left;
-}
-.gongneng-list {
-    width: 300px;
-    margin: 0 auto;
-    text-align: left;
-    input {
-        -webkit-appearance: checkbox;
-        -moz-appearance: checkbox;
-        appearance: checkbox;
-        margin-right: 5px;
-    }
-}
 .errlog-box {
     width: 400px;
     margin: 0 auto;
@@ -281,19 +245,6 @@ export default {
 @media screen and (max-width: 768px) {
     .errlog-box {
         width: 100%;
-    }
-    .wenti-list {
-        width: 85%;
-    }
-    .gongneng-list {
-        width: 80%;
-    }
-    .img-list {
-        padding-left: 0;
-        padding-right: 0;
-        .img-list-item {
-            width: 100%;
-        }
     }
     /*手机端隐藏背后*/
     .is-show {

@@ -15,7 +15,7 @@ export function userFriendAskLists(apiBaseUrl, query) {
 export function userFriendAskCreate(apiBaseUrl, checkCode, remark) {
     return create(apiBaseUrl)({
         url: "/api/user/friendAsk/create",
-        method: "post",
+        method: "get",
         params: {
             checkCode: checkCode,
             remark: remark

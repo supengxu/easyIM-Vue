@@ -59,16 +59,13 @@
                 a.dispatchEvent(event);
             },
             userQRCodeClick() {
-                console.log("我进入了userQRCodeClick")
+
                 if (this.userQRCodeImg) {
-                    console.log("我进入了222")
                     this.userQRCodeVisible = true;
                     return false;
                 } else {
-                    console.log("我进入了")
                     userQRCheckCode(this.apiBaseUrl)
                         .then(response => {
-                            console.log("我进入了核心")
                             if (response.code !== 0) {
                                 this.requestErr(response.code, response.message);
                                 return false;
@@ -114,35 +111,34 @@
                 userGroupUserCheckCode(
                     this.apiBaseUrl,
                     this.groupId
-                )
-                    .then(response => {
+                ).then(response => {
 
-                        if (response.code !== 0) {
-                            this.requestErr(response.code, response.message);
+                    if (response.code !== 0) {
+                        this.requestErr(response.code, response.message);
+                        return false;
+                    }
+                    var opts = {
+                        errorCorrectionLevel: "H",
+                        type: "image/jpeg",
+                        rendererOpts: {
+                            quality: 0.3
+                        }
+                    };
+                    let qrCodeUrl = this.groupQRCodeUrl + response.data;
+
+                    // 生成二维码
+                    QRCode.toDataURL(qrCodeUrl, opts, (error, url) => {
+                        if (error) {
+                            alert(error);
                             return false;
                         }
-                        var opts = {
-                            errorCorrectionLevel: "H",
-                            type: "image/jpeg",
-                            rendererOpts: {
-                                quality: 0.3
-                            }
-                        };
-                        let qrCodeUrl = this.groupQRCodeUrl + response.data;
-
-                        // 生成二维码
-                        QRCode.toDataURL(qrCodeUrl, opts, (error, url) => {
-                            if (error) {
-                                alert(error);
-                                return false;
-                            }
-                            this.groupQRCodeVisible = true;
-                            this.groupQRCodeImg = url;
-                            console.log(url);
-                        });
-                    })
-                    .catch(() => {
+                        this.groupQRCodeVisible = true;
+                        this.groupQRCodeImg = url;
+                        console.log(url);
                     });
+                })
+                .catch(() => {
+                });
             },
             // 关闭群二维码
             groupQRCodeCloseHandle() {

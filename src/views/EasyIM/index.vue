@@ -6,31 +6,15 @@
         <div class="im-box" :class="isShow ? 'im-box-show' : ''"
              :style="imBoxStyle"
              ref="imBox">
-            <div class="im-box-move" @mousedown="moveImBox"></div>
-
-            <div class="im-box-confirm-box" v-if="confirm.isShow" @click="confirm.isShow = false">
-                <div class="im-box-confirm">
-                    <div class="im-box-confirm-header">
-                        <div class="im-box-confirm-title">{{confirm.title}}</div>
-                    </div>
-                    <div class="im-box-confirm-content">
-                        <div class="im-box-confirm-message">{{confirm.message}}</div>
-                    </div>
-                    <div class="im-box-confirm-buttons">
-                        <div class="im-box-confirm-button im-box-confirm-cancel" @click="confirm.cancelHandle()">
-                            {{confirm.cancelName}}
-                        </div>
-                        <div class="im-box-confirm-button im-box-confirm-ok" @click="confirm.okHandle()">
-                            {{confirm.okName}}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="im-box-move" @mousedown="moveImBox"/>
+            <!-- TODO 待移除-->
+            <pop-ups class="im-box-confirm-box" :confirm="confirm"/>
 
 
-            <login v-if="!user.uid" @click="isShowClick" v-on:login-success="init" v-on:user-logout="userLogout"/>
+            <login v-if="!user.uid" @click="isShowClick" v-on:login-success="init"/>
 
-            <easy-header :confirmInit="confirmInit" :user="user" @user-qr-code-click="openUserQRCodeClick"></easy-header>
+            <easy-header v-on:userLogout="userLogout" :confirmInit="confirmInit" :user="user"
+                         @user-qr-code-click="openUserQRCodeClick"/>
             <qr-code :user="user" ref="qrUserImage"/>
             <nav class="im-tab-nav">
                 <ul class="im-tab">
@@ -47,12 +31,10 @@
                     </li>
                 </ul>
             </nav>
-
+            <!--这三个Main标签完全可以用其他的来代替，话一周时间替换他-->
             <!-- 历史消息-->
             <main class="im-panel-body" v-if="imTabSelectedIndex === 0">
-                <div class="im-user-warning-box" v-if="!webSocketIsOpen">
-                    <div class="im-chat-warning" style="top: 0;" v-html="webSocketWarningText"></div>
-                </div>
+                <warning-box v-if="!webSocketIsOpen"/>
                 <div class="im-chat-reconnect" v-if="!webSocketIsReconnect">
                     <a href="javascript:" @click="init">重新连接</a>
                 </div>
@@ -72,7 +54,7 @@
                     <template v-for="(item) in sortHistoryMsgList">
                         <li @click="handleChat(item)" :key="item.type + item.id">
                             <div class="im-user-left">
-                                <img :src="item.avatar | getDefaultAvatar" alt="" class="im-user-avatar">
+                                <img :src="null | getDefaultAvatar" alt="" class="im-user-avatar">
                             </div>
                             <div class="im-user-right">
                                 <div class="im-user-info">
@@ -229,7 +211,9 @@
             <header class="im-chat-header">
                 <div class="im-chat-move" @mousedown="moveChatMsg"></div>
                 <div class="im-chat-user">
-                    <img :src="chatUser.avatar | getDefaultAvatar" alt="" class="im-chat-user-avatar">
+                    <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAgMAAABBb5lxAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAMUExURUxpcfDw8OPj4+Dg4FOJnTQAAAABdFJOUwBA5thmAAABUElEQVRYw+3Yy22EMBAGYDpLFUMOPlCCS3AVrmNLYJugBB9yy4UDKwHJhhj5Mdj/slYekn3+NPJ4PGNB87ICq2kQtV4x9l5ZZZVV9hvsjdpLnk30ufosG+6sy7HlrqjNsfGLkcqwYWMyw/TGXtNs21q8uYDN34zSbLKsT7LRMoUxmWQGY4NlXQmmLRM/yKwKi3qO6aLR/jJ7NFOB3RBR4iKZB5kq0Vlgny5Y1y8EjRpbBoHNty7DDDYGwaE6s4meneQrex5nn48tVZllI5fowdOmsGh90WiqVKbguWFVAEuP3TfwPQX7dJ9IbYrt3Ux0STBNBwPOY06woPwe0y4TR2wmbx0x4zPJs8VX3pk4bAyYG85hOmSCYxNFq2eYiZlkWKyc27mzhWEUs4ljfcRGjsmIDU+wrrJCzGBVYEuvInZjVFu/ASurrLL/y64N9sv6AwiKosleKgwtAAAAAElFTkSuQmCC"
+                        alt="" class="im-chat-user-avatar">
                     <div class="im-chat-user-info">
                         <span class="im-chat-user-name" :title="chatUser.name">
                             {{ chatUser.name }}
@@ -245,7 +229,7 @@
                     </div>
                 </div>
                 <div class="im-chat-setwin">
-                    <div class="im-icon-close" style="cursor: pointer;" @click="openGroupQRImage"
+                    <div class="im-icon-close" style="cursor: pointer;" @click="openGroupQRClick()"
                          v-if="historyMsgListSelected.type === 2">
                         <img src="../../assets/image/qrcode.png" alt="二维码" title="二维码"
                              style="width: 100%; height: 100%;vertical-align: text-bottom;">
@@ -396,11 +380,15 @@
     import {getSid, getUid, setSid, setUid, delSid, delUid} from "../../utils/cookieUtil"
     import QrCode from "../../components/QrCode/QrCode";
     import EasyHeader from "../header/EasyHeader";
+    import PopUps from "../../components/PopUps/PopUps";
+    import WarningBox from "../../components/WarningBox/WarningBox";
 
     let QRCode = require("qrcode");
     export default {
         name: "background",
         components: {
+            WarningBox,
+            PopUps,
             EasyHeader,
             QrCode,
             Login
@@ -693,43 +681,6 @@
             };
         },
         methods: {
-
-            // 群二维码
-            openGroupQRImage() {
-                if (this.groupQRCodeImg) {
-                    this.groupQRCodeVisible = true;
-                    return false;
-                }
-                userGroupUserCheckCode(
-                    this.apiBaseUrl,
-                    this.historyMsgListSelected.id
-                )
-                    .then(response => {
-                        if (response.code !== 0) {
-                            this.requestErr(response.code, response.message);
-                            return false;
-                        }
-                        var opts = {
-                            errorCorrectionLevel: "H",
-                            type: "image/jpeg",
-                            rendererOpts: {
-                                quality: 0.3
-                            }
-                        };
-                        let qrCodeUrl = this.groupQRCodeUrl + response.data;
-                        console.log(qrCodeUrl);
-                        // 生成二维码
-                        QRCode.toDataURL(qrCodeUrl, opts, (error, url) => {
-                            if (error) {
-                                alert(error);
-                                return false;
-                            }
-                            this.groupQRCodeVisible = true;
-                            this.groupQRCodeImg = url;
-                        });
-                    })
-                    .catch(() => {});
-            },
             // 输入框的失去焦点事件, 解决微信中的bug
             chatTextBlur() {
                 window.scroll(0, 0);
@@ -780,20 +731,6 @@
                 if (cancelName) {
                     this.confirm.cancelName = cancelName;
                 }
-            },
-            userOutClick() {
-                this.confirmInit(
-                    "提示",
-                    "确定登出吗?",
-                    () => {
-                        // 确定了
-                        this.userOut();
-                    },
-                    () => {
-                        // 取消了登出
-                        this.confirm.isShow = false;
-                    }
-                );
             },
             // 登出
             userOut() {
@@ -1031,7 +968,8 @@
                         // 初始化 WebSocket
                         this.webSocketInit();
                     })
-                    .catch(() => {
+                    .catch((e) => {
+                        console.log("页面初始化失败" + e.toString())
                     });
             },
             // 获取用户朋友列表
@@ -1272,7 +1210,7 @@
                     profile: {},
                     sid: null
                 };
-
+                console.log("登陆后出现了么")
                 this.userFriendList = {};
                 this.newFriendList = [];
                 this.userGroupList = {};
@@ -1673,6 +1611,13 @@
                     this.$refs.qrUserImage.userQRCodeClick();
                 })
             },
+            // 打开群二维码
+            openGroupQRClick() {
+                this.$nextTick(() => {
+                    this.$refs.qrImage.groupQRCodeClick(this.chatMsgListGroupQuery.groupId);
+                })
+            },
+
             // 消息类型的消息（群消息）
             wsGroupMsgHandle(response) {
                 let type = response.type;
@@ -2321,149 +2266,6 @@
         z-index: 999;
     }
 
-    .im-panel-header {
-        position: relative;
-        background-color: rgba(230, 230, 230, 0.7);
-        color: #fff;
-        height: 80px;
-        padding: 7px 10px;
-        zoom: 1;
-        font-size: 16px;
-        box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.06), 0 2px 0 0 rgba(0, 0, 0, 0.01);
-        overflow: hidden;
-
-        .im-header-user {
-            padding-left: 8px;
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-
-            .im-header-user-avatar {
-                flex: 0 0 auto;
-                display: inline-block;
-                width: 52px;
-                height: 52px;
-                border-radius: 50%;
-            }
-
-            .im-header-user-content {
-                margin-left: 8px;
-                overflow: hidden;
-            }
-
-            .im-header-user-name {
-                margin-top: 1px;
-                color: #000;
-                @include text-overflow;
-            }
-
-            .im-header-user-remark {
-                margin-top: 1px;
-                font-size: 13px;
-                color: rgba(0, 0, 0, 0.6);
-                @include text-overflow;
-            }
-        }
-
-        .im-header-out-login {
-            display: inline-block;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-        }
-
-        .im-header-qrcode-box {
-            display: inline-block;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-        }
-
-        .im-header-setwin {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-        }
-    }
-
-    .im-box-confirm-box {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        text-align: center;
-
-        .im-box-confirm {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate3d(-50%, -50%, 0);
-            background-color: #fff;
-            width: 85%;
-            border-radius: 3px;
-            font-size: 16px;
-            overflow: hidden;
-            backface-visibility: hidden;
-            transition: .2s;
-        }
-
-        .im-box-confirm-header {
-            padding: 15px 0 0;
-        }
-
-        .im-box-confirm-title {
-            text-align: center;
-            padding-left: 0;
-            margin-bottom: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .im-box-confirm-content {
-            padding: 10px 20px 15px;
-            border-bottom: 1px solid #ddd;
-            min-height: 36px;
-            position: relative;
-        }
-
-        .im-box-confirm-message {
-            color: #999;
-            margin: 0;
-            text-align: center;
-            line-height: 36px;
-        }
-
-        .im-box-confirm-buttons {
-            display: flex;
-            height: 40px;
-            line-height: 40px;
-        }
-
-        .im-box-confirm-button {
-            line-height: 35px;
-            display: block;
-            background-color: #fff;
-            flex: 1;
-            margin: 0;
-            border: 0;
-            cursor: pointer;
-        }
-
-        .im-box-confirm-cancel {
-            width: 50%;
-            border-right: 1px solid #ddd;
-        }
-
-        .im-box-confirm-ok {
-            color: #26a2ff;
-            width: 50%;
-        }
-    }
-
 
     .im-tab-nav {
         background-color: rgba(230, 230, 230, 0.7);
@@ -2832,10 +2634,6 @@
         opacity: 0.8;
     }
 
-    .im-user-warning-box {
-        height: 25px;
-        background-color: rgba(0, 0, 0, 0);
-    }
 
     .dotting {
         position: absolute;
@@ -3255,6 +3053,84 @@
             width: 100%;
             height: 100%;
             border: 0 !important;
+        }
+    }
+
+    .im-box-confirm-box {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        text-align: center;
+
+        .im-box-confirm {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate3d(-50%, -50%, 0);
+            background-color: #fff;
+            width: 85%;
+            border-radius: 3px;
+            font-size: 16px;
+            overflow: hidden;
+            backface-visibility: hidden;
+            transition: .2s;
+        }
+
+        .im-box-confirm-header {
+            padding: 15px 0 0;
+        }
+
+        .im-box-confirm-title {
+            text-align: center;
+            padding-left: 0;
+            margin-bottom: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .im-box-confirm-content {
+            padding: 10px 20px 15px;
+            border-bottom: 1px solid #ddd;
+            min-height: 36px;
+            position: relative;
+        }
+
+        .im-box-confirm-message {
+            color: #999;
+            margin: 0;
+            text-align: center;
+            line-height: 36px;
+        }
+
+        .im-box-confirm-buttons {
+            display: flex;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .im-box-confirm-button {
+            line-height: 35px;
+            display: block;
+            background-color: #fff;
+            flex: 1;
+            margin: 0;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .im-box-confirm-cancel {
+            width: 50%;
+            border-right: 1px solid #ddd;
+        }
+
+        .im-box-confirm-ok {
+            color: #26a2ff;
+            width: 50%;
         }
     }
 </style>
