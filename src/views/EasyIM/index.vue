@@ -198,7 +198,6 @@
                     </div>
                 </div>
             </footer>
-
         </div>
 
         <!--聊天界面-->
@@ -354,7 +353,7 @@
 
     import {userLoginInfo} from "../../api/userIndex";
     import {userFriendLists} from "../../api/userFriend";
-    import {userLoginByTourist, userLoginByQq} from "../../api/userLogin";
+    import {getLocalStorage,setLocalStorage} from "../../utils/localStorageUtil"
     import {
         userFriendMsgClearUnMsgCount,
         userFriendMsgCreate,
@@ -441,6 +440,7 @@
         },
         data() {
             return {
+                // region 模板主题相关参数
                 themeList: [
                     {
                         "background-image":
@@ -489,6 +489,9 @@
                     "background-color": "#f6f6f6"
                 },
                 themeVisible: false,
+                // endregion
+
+                //region IM导航栏的配置
                 imTabList: [
                     {
                         index: 0,
@@ -507,6 +510,8 @@
                     }
                 ],
                 imTabSelectedIndex: 0, // 选中的index
+                // endregion
+
                 userQRCodeImg: null,
                 groupQRCodeImg: null,
                 groupQRCodeVisible: false,
@@ -536,6 +541,7 @@
                 createGroupName: "",
                 createGroupVisible: false,
                 chatVisible: false,
+                // region 聊天中的emoji图像
                 emojiList: [
                     {
                         title: "微笑",
@@ -635,6 +641,7 @@
                     }
                 ],
                 emojiVisible: false,
+                // endregion
                 chatUser: {},
                 chatTextFocus: false,
                 chatCount: 0, // 当前窗口收到的消息总量
@@ -658,7 +665,11 @@
                 chatMsgListHandleLoading: false,
                 chatMsgListHandleMoreText: "",
                 chatMaxCount: 1, // 最大消息数, 用作有多少条消息就 ack 一次, 后期可以做成定时器
+
+                // region webSocket相关参数
                 webSocket: null,
+
+
                 webSocketReconnectCount: 0,
                 webSocketIsReconnect: true, // 是否重连
                 webSocketWarningText:
@@ -667,6 +678,9 @@
                 // 心跳定时器
                 webSocketPingTimer: null,
                 webSocketPingTime: 10000, // 心跳的间隔，当前为 10秒,
+                // endregion
+
+                //region 弹窗相关
                 confirm: {
                     isShow: false, // 是否显示
                     title: "提示", // 标题
@@ -678,6 +692,7 @@
                     }, // 取消的回调
                     cancelName: "取消" // 取消按钮的名称
                 }
+                //endregion
             };
         },
         methods: {
@@ -686,12 +701,6 @@
                 window.scroll(0, 0);
             },
 
-            setLocalStorage(name, value) {
-                localStorage.setItem(name, value);
-            },
-            getLocalStorage(name) {
-                return localStorage.getItem(name);
-            },
             // 点击切换主题
             changeTheme(index, isLocalStorage) {
                 // 判断是否存在下标
@@ -707,7 +716,7 @@
                 if (themeSelected) {
                     this.themeSelected = themeSelected;
                     if (isLocalStorage === true) {
-                        this.setLocalStorage("themSelectedIndex", index);
+                        setLocalStorage("themSelectedIndex", index);
                     }
                 }
             },
@@ -742,7 +751,7 @@
             // 初始化界面
             init() {
                 // 初始化主题背景
-                let themSelectedIndex = this.getLocalStorage("themSelectedIndex");
+                let themSelectedIndex = getLocalStorage("themSelectedIndex");
                 this.changeTheme(themSelectedIndex, false);
                 // 初始化用户信息
                 this.userInit();

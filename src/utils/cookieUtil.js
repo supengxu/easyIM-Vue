@@ -49,3 +49,36 @@ export function delSid() {
 function  isEmpty(obj) {
     return (!obj || typeof obj === "undefined" || obj === null || obj === "");
 }
+
+export function  setUserCheckCode(value) {
+    Cookies.set("USER_CHECK_CODE", value, {
+        expires: 1,
+        path: "/"
+    });
+}
+export function  getUserCheckCode() {
+    return Cookies.get("USER_CHECK_CODE", {
+        path: "/"
+    });
+}
+export function  delUserCheckCode() {
+    return Cookies.remove("USER_CHECK_CODE", {
+        path: "/"
+    });
+}
+export function  setGroupCheckCode(value) {
+    Cookies.set("GROUP_CHECK_CODE", value, {
+        expires: 1,
+        path: "/"
+    });
+}
+export function  getGroupCheckCode() {
+    return Cookies.get("GROUP_CHECK_CODE", {
+        path: "/"
+    });
+}
+export function  delGroupCheckCode() {
+    return Cookies.remove("GROUP_CHECK_CODE", {
+        path: "/"
+    });
+}

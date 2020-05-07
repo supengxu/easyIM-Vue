@@ -37,7 +37,7 @@ import Cookies from "js-cookie";
 // protobuf 编码
 import protoRoot from "@/proto/proto";
 import Background from "./EasyIM/index";
-
+import {setUserCheckCode,getUserCheckCode,delUserCheckCode,setGroupCheckCode,getGroupCheckCode,delGroupCheckCode}from "../utils/cookieUtil"
 const WSBaseReqProto = protoRoot.lookup("protocol.WSBaseReqProto");
 const WSBaseResProto = protoRoot.lookup("protocol.WSBaseResProto");
 
@@ -50,13 +50,6 @@ export default {
         return {
             errLog: "",
             isShow: false,
-            qqRedirectUri: process.env.QQ_REDIRECT_URI,
-            qqLoginUrl:
-                process.env.QQ_LOGIN_URL+"&client_id=" +
-                client_id +
-                "&redirect_uri=" +
-                encodeURIComponent(process.env.QQ_REDIRECT_URI) +
-                "&state=1",
             userCheckCode: null,
             groupCheckCode: null,
             apiBaseUrl: process.env.VUE_APP_API_BASE,
@@ -92,8 +85,8 @@ export default {
         },
         // 登录初始化完成
         loginInit() {
-            let userCheckCode = this.getUserCheckCode();
-            let groupCheckCode = this.getGroupCheckCode();
+            let userCheckCode = getUserCheckCode();
+            let groupCheckCode = getGroupCheckCode();
             console.log("登录初始化完成", userCheckCode, groupCheckCode);
             // 如果有加朋友的验证码
             if (userCheckCode) {
@@ -101,14 +94,14 @@ export default {
                 // 发送加好友的请求
                 this.$refs["background"].createUserFriendAsk(userCheckCode);
                 // 发送后删除
-                this.delUserCheckCode();
+                delUserCheckCode();
                 this.$router.push("/");
             }
             // 如果有加群的验证码
             if (groupCheckCode) {
                 this.$refs["background"].joinGroupUser(groupCheckCode);
                 // 发送后删除
-                this.delGroupCheckCode();
+                delGroupCheckCode();
                 this.$router.push("/");
             }
             // 登录成功, 延时显示聊天界面
@@ -131,38 +124,6 @@ export default {
             }
             return false;
         },
-        setUserCheckCode(value) {
-            Cookies.set("USER_CHECK_CODE", value, {
-                expires: 1,
-                path: "/"
-            });
-        },
-        getUserCheckCode() {
-            return Cookies.get("USER_CHECK_CODE", {
-                path: "/"
-            });
-        },
-        delUserCheckCode() {
-            return Cookies.remove("USER_CHECK_CODE", {
-                path: "/"
-            });
-        },
-        setGroupCheckCode(value) {
-            Cookies.set("GROUP_CHECK_CODE", value, {
-                expires: 1,
-                path: "/"
-            });
-        },
-        getGroupCheckCode() {
-            return Cookies.get("GROUP_CHECK_CODE", {
-                path: "/"
-            });
-        },
-        delGroupCheckCode() {
-            return Cookies.remove("GROUP_CHECK_CODE", {
-                path: "/"
-            });
-        }
     },
     mounted() {
         // 默认打开, 延时显示聊天界面
@@ -177,18 +138,18 @@ export default {
         if (
             userCheckCode &&
             userCheckCode !== "" &&
-            userCheckCode !== this.getUserCheckCode()
+            userCheckCode !== getUserCheckCode()
         ) {
-            this.setUserCheckCode(userCheckCode);
+            setUserCheckCode(userCheckCode);
         }
         let groupCheckCode = this.getQueryVariable("groupCheckCode");
         // 判断是否和 Cookie 里面的值相同
         if (
             groupCheckCode &&
             groupCheckCode !== "" &&
-            groupCheckCode !== this.getGroupCheckCode()
+            groupCheckCode !== getGroupCheckCode()
         ) {
-            this.setGroupCheckCode(groupCheckCode);
+            setGroupCheckCode(groupCheckCode);
         }
     }
 };
